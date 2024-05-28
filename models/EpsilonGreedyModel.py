@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 from bandits_env import BanditsEnv
 from models.BaseModel import BaseModel
@@ -10,12 +11,24 @@ class EpsilonGreedyModel(BaseModel):
         k: int,
         epsilon: float,
         step_size: float | str = "avg",
+        q_start: Optional[np.ndarray] = None,
         time_steps: int = 1000,
     ):
         super().__init__(k, time_steps)
         self.epsilon = epsilon
-        self.step_size = step_size
         self.alpha = step_size if isinstance(step_size, float) else None
+        self.step_size = step_size
+        self.q_start = q_start
+
+        if not self._valid_q_start():
+            raise Exception(
+                f"found q_start of shape {q_start.shape} required shape is ({self.k},)"
+            )
+
+        if not self._valid_step_size():
+            raise Exception(
+                f"found step_size = {step_size} whereas step_size can be float or avg"
+            )
 
         self.avg_rewards = np.zeros(shape=(self.time_steps), dtype=np.float64)
         self.optimal_action_selection = np.zeros(
@@ -23,7 +36,11 @@ class EpsilonGreedyModel(BaseModel):
         )
 
     def train_one_run(self, run_idx: int, bandits_env: BanditsEnv):
-        self.q_t = np.zeros(shape=self.k, dtype=np.float64)
+        self.q_t = (
+            self.q_start.copy()
+            if self._q_start_provided()
+            else np.zeros(shape=self.k, dtype=np.float64)
+        )
 
         self.action_freq = None
         if not self._constant_step_size():
@@ -50,9 +67,7 @@ class EpsilonGreedyModel(BaseModel):
                 self.action_freq[action_idx] += 1
                 self.alpha = 1.0 / self.action_freq[action_idx]
 
-            self.q_t[action_idx] = self.q_t[action_idx] + self.alpha * (
-                r_t - self.q_t[action_idx]
-            )
+            self.q_t[action_idx] += self.alpha * (r_t - self.q_t[action_idx])
 
     def _choose_action(self):
         if np.random.rand() < self.epsilon:
@@ -61,7 +76,20 @@ class EpsilonGreedyModel(BaseModel):
         return argmax_random(self.q_t)
 
     def _constant_step_size(self):
-        return isinstance(self.step_size, int)
+        return isinstance(self.step_size, (float, int))
+
+    def _valid_step_size(self) -> bool:
+        return isinstance(self.step_size, float) or self.step_size == "avg"
+
+    def _valid_q_start(self) -> bool:
+        return self.q_start is None or self.q_start.shape == (self.k,)
+
+    def _q_start_provided(self) -> bool:
+        return self.q_start is not None and self._valid_q_start()
 
     def __str__(self):
-        return f"eg: eps={self.epsilon} alpha={self.step_size}"
+        return (
+            f"eg: ε={self.epsilon} α={self.step_size} Q1=0"
+            if self.q_start is None
+            else f"eg: ε={self.epsilon} α={self.step_size} Q1={self.q_start[0]}"
+        )

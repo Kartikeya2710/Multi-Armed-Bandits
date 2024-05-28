@@ -23,13 +23,12 @@ class BanditAgent:
                         k,
                         config.epsilon,
                         config.alpha,
+                        config.q_start,
                         time_steps,
                     )
                 )
             elif isinstance(config, UCBModelConfig):
-                self.models.append(
-                    UCBModel(k, config.uncertainity, config.alpha, time_steps)
-                )
+                self.models.append(UCBModel(k, config.c, config.alpha, time_steps))
 
             self.colors.append(config.color)
 
@@ -55,7 +54,7 @@ class BanditAgent:
         plt.ylabel("Average reward")
         plt.xlabel("Steps")
         plt.ylim(0, 1.8)
-        plt.legend(legend)
+        plt.legend(legend, loc="lower right")
         plt.show()
 
         for idx, model in enumerate(self.models):
@@ -65,5 +64,5 @@ class BanditAgent:
         plt.ylabel("% Optimal action")
         plt.xlabel("Steps")
         plt.ylim(0, 100)
-        plt.legend(legend)
+        plt.legend(legend, loc="lower right")
         plt.show()

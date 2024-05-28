@@ -8,12 +8,12 @@ class UCBModel(BaseModel):
     def __init__(
         self,
         k: int,
-        uncertainity: float,
+        c: float,
         step_size: float | str = "avg",
         time_steps: int = 1000,
     ):
         super().__init__(k, time_steps)
-        self.uncertainity = uncertainity
+        self.c = c
         self.step_size = step_size
         self.alpha = step_size if isinstance(step_size, float) else None
 
@@ -61,11 +61,11 @@ class UCBModel(BaseModel):
         # A_t = argmax{a} ( q_t(a) + c * sqrt(ln(t) / N_t(a)) )
 
         return argmax_random(
-            self.q_t + self.uncertainity * np.sqrt(np.log(step + 1) / self.action_freq)
+            self.q_t + self.c * np.sqrt(np.log(step + 1) / self.action_freq)
         )
 
     def _constant_step_size(self):
         return isinstance(self.step_size, int)
 
     def __str__(self):
-        return f"ucb: c={self.uncertainity} alpha={self.step_size}"
+        return f"ucb: c={self.c} α={self.step_size}"
