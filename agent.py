@@ -1,8 +1,14 @@
 import matplotlib.pyplot as plt
 from models.UCBModel import UCBModel
 from models.EpsilonGreedyModel import EpsilonGreedyModel
+from models.ThompsonSamplingModel import ThompsonSamplingModel
 from bandits_env import BanditsEnv
-from config import GeneralModelConfig, EpsilonGreedyModelConfig, UCBModelConfig
+from config import (
+    GeneralModelConfig,
+    EpsilonGreedyModelConfig,
+    UCBModelConfig,
+    ThompsonSamplingModelConfig,
+)
 from tqdm import tqdm
 
 
@@ -29,6 +35,13 @@ class BanditAgent:
                 )
             elif isinstance(config, UCBModelConfig):
                 self.models.append(UCBModel(k, config.c, config.alpha, time_steps))
+
+            elif isinstance(config, ThompsonSamplingModelConfig):
+                self.models.append(
+                    ThompsonSamplingModel(
+                        config.prior_mean, config.prior_std, k, time_steps
+                    )
+                )
 
             self.colors.append(config.color)
 

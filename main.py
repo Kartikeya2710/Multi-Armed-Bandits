@@ -6,6 +6,7 @@ model_configs = [
     config.EpsilonGreedyModelConfig(0.0, 0.1, "blue", np.array([5.0] * config.k)),
     config.EpsilonGreedyModelConfig(0.1, 0.1, "grey"),
     config.UCBModelConfig(1, 0.1, "black"),
+    config.ThompsonSamplingModelConfig(0.0, 50.0, "brown"),
 ]
 
 agent = BanditAgent(config.k, model_configs, config.runs, config.time_steps)

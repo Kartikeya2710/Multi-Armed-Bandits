@@ -38,6 +38,20 @@ class UCBModelConfig(GeneralModelConfig):
         return f"Upper Confidence Bound -> c: {self.c}, alpha: {self.alpha}, color: {self.color}"
 
 
+@dataclass(init=False, repr=False)
+class ThompsonSamplingModelConfig(GeneralModelConfig):
+    prior_mean: float = 0.0
+    prior_std: float = 100.0
+
+    def __init__(self, prior_mean, prior_std, color):
+        super().__init__(color)
+        self.prior_mean = prior_mean
+        self.prior_std = prior_std
+
+    def __repr__(self):
+        return f"Thompson Sampling -> mean: {self.prior_mean}, std: {self.prior_std}, color: {self.color}"
+
+
 k = 10
 runs = 2000
 time_steps = 1000
