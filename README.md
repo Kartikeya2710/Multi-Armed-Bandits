@@ -37,6 +37,16 @@ Incremental implementation of sample averaging and constant step size method wit
 
 <img src="./plots/optimistic_initialization/optimal_action.png" alt="% optimal action v/s steps" width=500>
 
+## Thompson Sampling
+
+Implementation of thompson sampling assuming gaussian distribution with variance 1 for the reward distributions. Posterior distributions are thus, alos gaussian distributions.
+
+*Note: I haven't varied the mean a lot because having a large standard deviation will automatically make the prior distribution very flat and so shifting the mean won't have a drastic effect*
+
+<img src="./plots/thompson_sampling/avg_reward.png" alt="average reward v/s steps" width=500>
+
+<img src="./plots/thompson_sampling/optimal_action.png" alt="% optimal action v/s steps" width=500>
+
 ## Comparisons
 
 <img src="./plots/comparisons/avg_reward.png" alt="average reward v/s steps" width=500>
