@@ -30,11 +30,6 @@ class EpsilonGreedyModel(BaseModel):
                 f"found step_size = {step_size} whereas step_size can be float or avg"
             )
 
-        self.avg_rewards = np.zeros(shape=(self.time_steps), dtype=np.float64)
-        self.optimal_action_selection = np.zeros(
-            shape=self.time_steps, dtype=np.float64
-        )
-
     def train_one_run(self, run_idx: int, bandits_env: BanditsEnv):
         self.q_t = (
             self.q_start.copy()

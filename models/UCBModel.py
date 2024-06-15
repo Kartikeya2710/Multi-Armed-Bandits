@@ -17,11 +17,6 @@ class UCBModel(BaseModel):
         self.step_size = step_size
         self.alpha = step_size if isinstance(step_size, float) else None
 
-        self.avg_rewards = np.zeros(shape=self.time_steps, dtype=np.float64)
-        self.optimal_action_selection = np.zeros(
-            shape=self.time_steps, dtype=np.float64
-        )
-
     def train_one_run(self, run_idx: int, bandits_env: BanditsEnv):
         self.q_t = np.zeros(shape=self.k, dtype=np.float64)
         # initialized as ones to prevent dividing by zero during action selection
